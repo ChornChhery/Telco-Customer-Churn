@@ -1,0 +1,264 @@
+---
+title: "Telco Customer Churn Analysis"
+author: "Chhery Chorn"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    theme: cosmo
+    highlight: tango
+    toc: true
+    toc_float: true
+    number_sections: true
+    code_folding: show
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+library(reticulate)
+# Optional: specify Python path if needed
+# use_python("C:\Users\user\AppData\Local\Programs\Python\Python310\python.exe")
+```
+## 1. Load Data and Initial Exploration
+
+```{python}
+import numpy as np
+import pandas as pd
+
+# Load dataset
+df = pd.read_csv('WA_Fn-UseC_-Telco-Customer-Churn.csv')
+df.head()
+```
+
+```{python}
+df.columns.tolist()
+```
+
+```{python}
+df.isnull().sum()
+```
+
+```{python}
+df.describe()
+```
+
+```{python}
+df.shape
+```
+
+```{python}
+df.info()
+```
+
+
+## 2. Explore Categorical Variables
+
+```{python}
+print(df["gender"].unique())
+```
+
+```{python}
+print(df['SeniorCitizen'].unique())
+```
+
+```{python}
+np.sum(df['Churn'] == 'Yes'), np.sum(df['Churn'] == 'No')
+```
+
+```{python}
+(df['Churn'] == 'Yes').mean(), (df['Churn'] == 'No').mean()
+```
+
+
+## 3. Display Unique Values for Non-Numerical Columns
+
+```{python}
+numerical_list = ['tenure', 'MonthlyCharges', 'TotalCharges']
+
+for col in df.columns:
+    if col not in numerical_list:
+        print(f"{col}: {df[col].unique()}")
+        print()
+```
+
+
+## 4. Clean and Convert TotalCharges
+
+```{python}
+len(df[df['TotalCharges']== ' '])
+```
+
+```{python}
+df['TotalCharges'] = df['TotalCharges'].replace({" ": "0.0"})
+df['TotalCharges'] = df['TotalCharges'].astype(float)
+df.info()
+```
+
+
+## 5. Churn Distribution (Count & Percentage)
+
+```{python}
+# Count and percentage of Churn
+churn_counts = df['Churn'].value_counts()
+churn_percentages = df['Churn'].value_counts(normalize=True) * 100
+
+# Combine into a DataFrame for nice display
+churn_dist = pd.DataFrame({
+    'Count': churn_counts,
+    'Percentage': churn_percentages.round(1)
+})
+
+print("การกระจายของตัวแปรเป้าหมาย (Churn):")
+print(churn_dist)
+```
+
+
+## 6. Contract Type Distribution
+
+```{python}
+# Count and percentage of Contract
+contract_counts = df['Contract'].value_counts()
+contract_percentages = df['Contract'].value_counts(normalize=True) * 100
+
+# Combine into a DataFrame
+contract_dist = pd.DataFrame({
+    'Count': contract_counts,
+    'Percentage': contract_percentages.round(1)
+})
+
+print("\nการกระจายของประเภทสัญญา (Contract):")
+print(contract_dist)
+```
+
+
+## 7. Visualizations
+
+### Churn and Contract Distribution
+
+```{python}
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+fig, ax = plt.subplots(1, 2, figsize=(12, 5))
+
+sns.countplot(data=df, x='Churn', ax=ax[0])
+ax[0].set_title('Churn Distribution')
+
+sns.countplot(data=df, x='Contract', ax=ax[1])
+ax[1].set_title('Contract Type Distribution')
+
+plt.tight_layout()
+plt.show()  # 👈 Essential for display in R Markdown
+```
+
+### Histogram of Monthly Charges
+
+```{python}
+plt.figure(figsize=(10, 6))
+sns.histplot(df['MonthlyCharges'], bins=30, kde=True, color='skyblue')
+plt.title('Histogram of Monthly Charges (Bimodal)')
+plt.xlabel('Monthly Charges ($)')
+plt.ylabel('Number of Customers')
+plt.grid(True, linestyle='--', alpha=0.7)
+plt.show()  # 👈 Essential
+```
+
+### Box Plot: Tenure vs Churn
+
+```{python}
+plt.figure(figsize=(8, 6))
+sns.boxplot(data=df, x='Churn', y='tenure', palette='Set2')
+plt.title('Box Plot: Tenure vs Churn')
+plt.xlabel('Churn (Cancel service?)')
+plt.ylabel('Tenure (Months)')
+plt.grid(True, linestyle='--', alpha=0.7)
+plt.show()  # 👈 Essential
+```
+
+### Average Tenure by Churn Status
+
+```{python}
+avg_tenure = df.groupby('Churn')['tenure'].mean().round(1)
+print("ค่าเฉลี่ยของ tenure แยกตาม Churn:")
+for churn_status, avg in avg_tenure.items():
+    print(f"ลูกค้าที่{'ยกเลิก' if churn_status == 'Yes' else 'ไม่ยกเลิก'}บริการ: {avg} เดือน")
+```
+
+
+## 8. FacetGrid: Tenure vs Monthly Charges by Contract and Churn
+
+```{python}
+# Ensure TotalCharges is numeric
+df['TotalCharges'] = pd.to_numeric(df['TotalCharges'], errors='coerce')
+df['TotalCharges'] = df['TotalCharges'].fillna(0)
+
+# Create FacetGrid
+g = sns.FacetGrid(df, col='Contract', hue='Churn', col_wrap=3, height=4, aspect=1.2, palette=['#1f77b4', '#d62728'])
+g.map(sns.scatterplot, 'tenure', 'MonthlyCharges', alpha=0.7)
+g.add_legend()
+
+# Set titles
+axes = g.axes.flatten()
+titles = ['Month-to-month', 'One year', 'Two year']
+for ax, title in zip(axes, titles):
+    ax.set_title(title)
+
+# DO NOT create new plt.figure() — it breaks layout
+# plt.figure(figsize=(20, 10))  ❌ Remove this line
+
+plt.suptitle('Churn Distribution by Tenure, Monthly Charges, and Contract', y=1.02, fontsize=16)
+plt.tight_layout()
+plt.show()  # 👈 Essential
+```
+
+
+## 9. Key Metrics Summary
+
+### Churn Rate
+
+```{python}
+print("1. อัตราการยกเลิกบริการ (Churn Rate)")
+churn_rate = df['Churn'].value_counts(normalize=True) * 100
+print(churn_rate)
+```
+
+### Contract Distribution
+
+```{python}
+print("2. สัดส่วนลูกค้าตามประเภทสัญญา")
+contract_distribution = df['Contract'].value_counts(normalize=True) * 100
+print(contract_distribution)
+```
+
+### Average Tenure by Churn
+
+```{python}
+print("3. ค่าเฉลี่ย tenure (ระยะเวลาใช้งาน) แยกตามสถานะ Churn")
+tenure_by_churn = df.groupby('Churn')['tenure'].mean()
+print(tenure_by_churn)
+```
+
+
+## 10. Correlation Heatmap
+
+```{python}
+plt.figure(figsize=(10,8))
+sns.heatmap(df[['tenure','MonthlyCharges','TotalCharges']].corr(), annot=True, cmap='coolwarm', fmt=".2f")
+plt.title('Correlation Heatmap')
+plt.show()  # 👈 Essential
+```
+
+
+## 11. Count Plots for Categorical Variables
+
+```{python}
+object_cols = df.select_dtypes(include="object").columns.to_list()
+object_cols = ['SeniorCitizen'] + object_cols  # SeniorCitizen is int but treated as categorical
+
+for col in object_cols:
+    plt.figure(figsize=(8,5))
+    sns.countplot(x=df[col])
+    plt.title(f'Count Plot of {col}')
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.show()  # 👈 Essential
+```
