@@ -1,0 +1,6 @@
+install.packages("rmarkdown")
+library(rmarkdown)
+install.packages("reticulate")
+library(reticulate)
+install.packages("knitr")
+library(knitr)
