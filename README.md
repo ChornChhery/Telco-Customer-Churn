@@ -48,3 +48,29 @@ The file can be opened directly in any modern web browser (e.g., Chrome, Edge, F
 Conclusion
 
 By using jupyter nbconvert, the notebook project.ipynb was successfully converted into an HTML report. This allows the project’s results to be shared and viewed easily without requiring Jupyter Notebook.
+
+
+
+
+=================================================================
+Type of data: 
+
+data is unnon class data or non class data
+
+miss type data
+
+max type is like example: category 5 varibles & numeric 5 variables
+
+if dependent variable is Churn is a 
+
+want to prepare group of data use unsupervised clustering
+
+want to 
+
+if we decide to analysis data we need to find type of data is non class data or unnon class data
+
+
+dependent variable must be category so we can use unsuperivised learning  k-mean, ann,
+dependent variable must be numeric so we can use supervised learning are k-mean, ann, svm
+
+for ann the method that can use is MLP or perceptrons tell too what that i need to see
