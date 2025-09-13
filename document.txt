@@ -175,3 +175,74 @@ from imblearn.over_sampling import SMOTE
 
 smote = SMOTE(random_state=42)
 
+x_train_smote, y_train_smote = smote.fit_resample(x_train, y_train)
+
+print(y_train_smote.shape)
+
+print(y_train_smote.value_counts())
+
+from sklearn.ensemble import RandomForestClassifier
+from xgboost import XGBClassifier
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+
+random_forest = RandomForestClassifier(n_estimators=100, random_state=42)
+
+random_forest.fit(x_train_smote, y_train_smote)
+
+print(y_test.value_counts())
+
+y_test_pred = random_forest.predict(x_test)
+
+print(f"accuracy: {accuracy_score(y_test, y_test_pred)}")
+
+print(confusion_matrix(y_test, y_test_pred))
+
+print(classification_report(y_test, y_test_pred))
+
+xgb = XGBClassifier(use_label_encoder=False, eval_metric='logloss', random_state=42)
+
+xgb.fit(x_train_smote, y_train_smote)
+
+print(y_test.value_counts())
+
+y_test_pred = xgb.predict(x_test)
+
+print(f"Accuracy XGBoost: {accuracy_score(y_test, y_test_pred)}")
+
+print("Confusion Matrix XGBoost: ")
+print(confusion_matrix(y_test, y_test_pred))
+
+print(classification_report(y_test, y_test_pred))
+
+from sklearn import svm
+
+svm_model = svm.SVC(kernel='linear',C=1.0, gamma='scale', random_state=42)
+
+svm_model.fit(x_train_smote, y_train_smote)
+
+y_test_pred = svm_model.predict(x_test)
+
+print(f"Accuracy SVM: {accuracy_score(y_test, y_test_pred)}")
+
+print("Confusion Matrix SVM: ")
+print(confusion_matrix(y_test, y_test_pred))
+
+print(classification_report(y_test, y_test_pred))
+
+from sklearn.neural_network import MLPClassifier
+
+mlp = MLPClassifier(hidden_layer_sizes=(100,), max_iter=300, random_state=42)
+
+mlp.fit(x_train_smote, y_train_smote)
+
+y_test_pred = mlp.predict(x_test)
+
+print(y_test_pred.shape)
+
+print(f"Accuracy MLP: {accuracy_score(y_test, y_test_pred)}")
+
+print(confusion_matrix(y_test, y_test_pred))
+
+print(classification_report(y_test, y_test_pred))
+
+
