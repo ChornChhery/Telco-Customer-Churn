@@ -3,14 +3,59 @@ import pandas as pd
 df = pd.read_csv('WA_Fn-UseC_-Telco-Customer-Churn.csv')
 df
 df.columns
+Index(['customerID', 'gender', 'SeniorCitizen', 'Partner', 'Dependents',
+       'tenure', 'PhoneService', 'MultipleLines', 'InternetService',
+       'OnlineSecurity', 'OnlineBackup', 'DeviceProtection', 'TechSupport',
+       'StreamingTV', 'StreamingMovies', 'Contract', 'PaperlessBilling',
+       'PaymentMethod', 'MonthlyCharges', 'TotalCharges', 'Churn'],
+      dtype='object')
+
 df.isnull().sum()
 df.describe()
 df.shape
+
 df.info()
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 7043 entries, 0 to 7042
+Data columns (total 21 columns):
+ #   Column            Non-Null Count  Dtype  
+---  ------            --------------  -----  
+ 0   customerID        7043 non-null   object 
+ 1   gender            7043 non-null   object 
+ 2   SeniorCitizen     7043 non-null   int64  
+ 3   Partner           7043 non-null   object 
+ 4   Dependents        7043 non-null   object 
+ 5   tenure            7043 non-null   int64  
+ 6   PhoneService      7043 non-null   object 
+ 7   MultipleLines     7043 non-null   object 
+ 8   InternetService   7043 non-null   object 
+ 9   OnlineSecurity    7043 non-null   object 
+ 10  OnlineBackup      7043 non-null   object 
+ 11  DeviceProtection  7043 non-null   object 
+ 12  TechSupport       7043 non-null   object 
+ 13  StreamingTV       7043 non-null   object 
+ 14  StreamingMovies   7043 non-null   object 
+ 15  Contract          7043 non-null   object 
+ 16  PaperlessBilling  7043 non-null   object 
+ 17  PaymentMethod     7043 non-null   object 
+ 18  MonthlyCharges    7043 non-null   float64
+ 19  TotalCharges      7043 non-null   object 
+ 20  Churn             7043 non-null   object 
+dtypes: float64(1), int64(2), object(18)
+memory usage: 1.1+ MB
+
 print(df["gender"].unique())
+['Female' 'Male']
+
 print(df['SeniorCitizen'].unique())
+[0 1]
+
 np.sum(df['Churn'] == 'Yes'), np.sum(df['Churn'] == 'No')
+(np.int64(1869), np.int64(5174))
+
 (df['Churn'] == 'Yes').mean(), (df['Churn'] == 'No').mean()
+(np.float64(0.2653698707936959), np.float64(0.7346301292063041))
+
 # Display the unique values in all the columns
 
 numerical_list = ['tenure', 'MonthlyCharges', 'TotalCharges']
@@ -39,6 +84,12 @@ churn_dist = pd.DataFrame({
 print("การกระจายของตัวแปรเป้าหมาย (Churn):")
 print(churn_dist)
 
+การกระจายของตัวแปรเป้าหมาย (Churn):
+       Count  Percentage
+Churn                   
+No      5174        73.5
+Yes     1869        26.5
+
 # Count and percentage of Contract
 contract_counts = df['Contract'].value_counts()
 contract_percentages = df['Contract'].value_counts(normalize=True) * 100
@@ -51,6 +102,13 @@ contract_dist = pd.DataFrame({
 
 print("\nการกระจายของประเภทสัญญา (Contract):")
 print(contract_dist)
+
+การกระจายของประเภทสัญญา (Contract):
+                Count  Percentage
+Contract                         
+Month-to-month   3875        55.0
+Two year         1695        24.1
+One year         1473        20.9
 
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -87,6 +145,10 @@ print("ค่าเฉลี่ยของ tenure แยกตาม Churn:")
 for churn_status, avg in avg_tenure.items():
     print(f"ลูกค้าที่{'ยกเลิก' if churn_status == 'Yes' else 'ไม่ยกเลิก'}บริการ: {avg} เดือน")
 
+ค่าเฉลี่ยของ tenure แยกตาม Churn:
+ลูกค้าที่ไม่ยกเลิกบริการ: 37.6 เดือน
+ลูกค้าที่ยกเลิกบริการ: 18.0 เดือน
+
 
 # จัดการข้อมูล TotalCharges ที่อาจมีค่าว่างและแปลงประเภทข้อมูล
 df['TotalCharges'] = pd.to_numeric(df['TotalCharges'], errors='coerce')
@@ -112,15 +174,34 @@ print("1. อัตราการยกเลิกบริการ (Churn Ra
 churn_rate = df['Churn'].value_counts(normalize=True) * 100
 print(churn_rate)
 
+1. อัตราการยกเลิกบริการ (Churn Rate)
+Churn
+No     73.463013
+Yes    26.536987
+Name: proportion, dtype: float64
+
 # --- 2. สัดส่วนลูกค้าตามประเภทสัญญา (Contract) ---
 print("2. สัดส่วนลูกค้าตามประเภทสัญญา")
 contract_distribution = df['Contract'].value_counts(normalize=True) * 100
 print(contract_distribution)
 
+2. สัดส่วนลูกค้าตามประเภทสัญญา
+Contract
+Month-to-month    55.019168
+Two year          24.066449
+One year          20.914383
+Name: proportion, dtype: float64
+
 # --- 3. ความสัมพันธ์ระหว่าง tenure และ Churn ---
 print("3. ค่าเฉลี่ย tenure (ระยะเวลาใช้งาน) แยกตามสถานะ Churn")
 tenure_by_churn = df.groupby('Churn')['tenure'].mean()
 print(tenure_by_churn)
+
+3. ค่าเฉลี่ย tenure (ระยะเวลาใช้งาน) แยกตามสถานะ Churn
+Churn
+No     37.569965
+Yes    17.979133
+Name: tenure, dtype: float64
 
 # correlation matrix - heatmap
 plt.figure(figsize=(10,8))
@@ -139,6 +220,11 @@ from sklearn.preprocessing import StandardScaler, LabelEncoder
 # identifying columns with object data type
 object_columns = df.select_dtypes(include="object").columns
 print(object_columns)
+Index(['gender', 'Partner', 'Dependents', 'PhoneService', 'MultipleLines',
+       'InternetService', 'OnlineSecurity', 'OnlineBackup', 'DeviceProtection',
+       'TechSupport', 'StreamingTV', 'StreamingMovies', 'Contract',
+       'PaperlessBilling', 'PaymentMethod'],
+      dtype='object')
 
 from sklearn.preprocessing import LabelEncoder
 import pickle
@@ -157,19 +243,63 @@ with open("encoders.pkl", "wb") as f:
   pickle.dump(encoders, f)
 
 encoders
+{'gender': LabelEncoder(),
+ 'Partner': LabelEncoder(),
+ 'Dependents': LabelEncoder(),
+ 'PhoneService': LabelEncoder(),
+ 'MultipleLines': LabelEncoder(),
+ 'InternetService': LabelEncoder(),
+ 'OnlineSecurity': LabelEncoder(),
+ 'OnlineBackup': LabelEncoder(),
+ 'DeviceProtection': LabelEncoder(),
+ 'TechSupport': LabelEncoder(),
+ 'StreamingTV': LabelEncoder(),
+ 'StreamingMovies': LabelEncoder(),
+ 'Contract': LabelEncoder(),
+ 'PaperlessBilling': LabelEncoder(),
+ 'PaymentMethod': LabelEncoder()}
 
 df.info()
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 7043 entries, 0 to 7042
+Data columns (total 20 columns):
+ #   Column            Non-Null Count  Dtype  
+---  ------            --------------  -----  
+ 0   gender            7043 non-null   int64  
+ 1   SeniorCitizen     7043 non-null   int64  
+ 2   Partner           7043 non-null   int64  
+ 3   Dependents        7043 non-null   int64  
+ 4   tenure            7043 non-null   int64  
+ 5   PhoneService      7043 non-null   int64  
+ 6   MultipleLines     7043 non-null   int64  
+ 7   InternetService   7043 non-null   int64  
+ 8   OnlineSecurity    7043 non-null   int64  
+ 9   OnlineBackup      7043 non-null   int64  
+ 10  DeviceProtection  7043 non-null   int64  
+ 11  TechSupport       7043 non-null   int64  
+ 12  StreamingTV       7043 non-null   int64  
+ 13  StreamingMovies   7043 non-null   int64  
+ 14  Contract          7043 non-null   int64  
+ 15  PaperlessBilling  7043 non-null   int64  
+ 16  PaymentMethod     7043 non-null   int64  
+ 17  MonthlyCharges    7043 non-null   float64
+ 18  TotalCharges      7043 non-null   float64
+ 19  Churn             7043 non-null   int64  
+dtypes: float64(2), int64(18)
+memory usage: 1.1 MB
 
 x = df.drop(columns=['Churn'])
 y = df['Churn']
 
 x.shape, y.shape
+((7043, 19), (7043,))
 
 from sklearn.model_selection import train_test_split
 
 x_train, x_test, y_train, y_test = train_test_split(x,y,test_size=0.2,random_state=42)
 
 x_train.shape, x_test.shape, y_train.shape, y_test.shape
+((5634, 19), (1409, 19), (5634,), (1409,))
 
 from imblearn.over_sampling import SMOTE
 
@@ -178,8 +308,13 @@ smote = SMOTE(random_state=42)
 x_train_smote, y_train_smote = smote.fit_resample(x_train, y_train)
 
 print(y_train_smote.shape)
+(8276,)
 
 print(y_train_smote.value_counts())
+Churn
+0    4138
+1    4138
+Name: count, dtype: int64
 
 from sklearn.ensemble import RandomForestClassifier
 from xgboost import XGBClassifier
@@ -190,29 +325,60 @@ random_forest = RandomForestClassifier(n_estimators=100, random_state=42)
 random_forest.fit(x_train_smote, y_train_smote)
 
 print(y_test.value_counts())
+Churn
+0    1036
+1     373
+Name: count, dtype: int64
 
 y_test_pred = random_forest.predict(x_test)
 
 print(f"accuracy: {accuracy_score(y_test, y_test_pred)}")
+accuracy: 0.7785663591199432
 
 print(confusion_matrix(y_test, y_test_pred))
+[[878 158]
+ [154 219]]
 
 print(classification_report(y_test, y_test_pred))
+precision    recall  f1-score   support
+
+           0       0.85      0.85      0.85      1036
+           1       0.58      0.59      0.58       373
+
+    accuracy                           0.78      1409
+   macro avg       0.72      0.72      0.72      1409
+weighted avg       0.78      0.78      0.78      1409
 
 xgb = XGBClassifier(use_label_encoder=False, eval_metric='logloss', random_state=42)
 
 xgb.fit(x_train_smote, y_train_smote)
 
 print(y_test.value_counts())
+Churn
+0    1036
+1     373
+Name: count, dtype: int64
 
 y_test_pred = xgb.predict(x_test)
 
 print(f"Accuracy XGBoost: {accuracy_score(y_test, y_test_pred)}")
+Accuracy XGBoost: 0.7856635911994322
 
 print("Confusion Matrix XGBoost: ")
 print(confusion_matrix(y_test, y_test_pred))
+Confusion Matrix XGBoost: 
+[[883 153]
+ [149 224]]
 
 print(classification_report(y_test, y_test_pred))
+precision    recall  f1-score   support
+
+           0       0.86      0.85      0.85      1036
+           1       0.59      0.60      0.60       373
+
+    accuracy                           0.79      1409
+   macro avg       0.72      0.73      0.73      1409
+weighted avg       0.79      0.79      0.79      1409
 
 from sklearn import svm
 
@@ -223,11 +389,23 @@ svm_model.fit(x_train_smote, y_train_smote)
 y_test_pred = svm_model.predict(x_test)
 
 print(f"Accuracy SVM: {accuracy_score(y_test, y_test_pred)}")
+Accuracy SVM: 0.7615330021291696
 
 print("Confusion Matrix SVM: ")
 print(confusion_matrix(y_test, y_test_pred))
+Confusion Matrix SVM: 
+[[795 241]
+ [ 95 278]]
 
 print(classification_report(y_test, y_test_pred))
+precision    recall  f1-score   support
+
+           0       0.89      0.77      0.83      1036
+           1       0.54      0.75      0.62       373
+
+    accuracy                           0.76      1409
+   macro avg       0.71      0.76      0.72      1409
+weighted avg       0.80      0.76      0.77      1409
 
 from sklearn.neural_network import MLPClassifier
 
@@ -238,11 +416,22 @@ mlp.fit(x_train_smote, y_train_smote)
 y_test_pred = mlp.predict(x_test)
 
 print(y_test_pred.shape)
+(1409,)
 
 print(f"Accuracy MLP: {accuracy_score(y_test, y_test_pred)}")
+Accuracy MLP: 0.7899219304471257
 
 print(confusion_matrix(y_test, y_test_pred))
+[[890 146]
+ [150 223]]
 
 print(classification_report(y_test, y_test_pred))
 
+precision    recall  f1-score   support
 
+           0       0.86      0.86      0.86      1036
+           1       0.60      0.60      0.60       373
+
+    accuracy                           0.79      1409
+   macro avg       0.73      0.73      0.73      1409
+weighted avg       0.79      0.79      0.79      1409
