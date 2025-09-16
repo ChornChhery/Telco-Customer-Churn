@@ -1,0 +1,23 @@
+========== Customer Churn Analysis Report ==========
+
+1. Overview:
+   The XGBoost model was trained to predict customer churn.
+   It addresses class imbalance with SMOTE and scales numerical data with StandardScaler.
+
+2. Top 10 Most Important Features:
+   - Contract                 : 0.5069
+   - OnlineSecurity           : 0.0518
+   - TechSupport              : 0.0450
+   - InternetService          : 0.0400
+   - Dependents               : 0.0373
+   - StreamingMovies          : 0.0318
+   - tenure                   : 0.0274
+   - PhoneService             : 0.0255
+   - MultipleLines            : 0.0239
+   - PaymentMethod            : 0.0236
+
+3. Prediction Example:
+   Sample Customer Data:
+    gender  SeniorCitizen  Partner  Dependents    tenure  PhoneService  MultipleLines  InternetService  OnlineSecurity  OnlineBackup  DeviceProtection  TechSupport  StreamingTV  StreamingMovies  Contract  PaperlessBilling  PaymentMethod  MonthlyCharges  TotalCharges  AvgMonthlyCharge_per_tenure
+      1              0        0           0 -1.281624             0              1                0               0             2                 0            0            0                0         0                 1              2       -1.164077     -0.995824                    -1.156095
+   Prediction Result: This customer is likely to churn (Probability: 0.81)
