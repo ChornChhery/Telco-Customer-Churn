@@ -2110,7 +2110,7 @@ Preprocessing</h2>
 <span id="cb65-3"><a href="#cb65-3" tabindex="-1"></a></span>
 <span id="cb65-4"><a href="#cb65-4" tabindex="-1"></a>x.shape, y.shape</span></code></pre></div>
 <pre><code>## ((7043, 19), (7043,))</code></pre>
-<div class="sourceCode" id="cb67"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb67-1"><a href="#cb67-1" tabindex="-1"></a>x_train, x_test, y_train, y_test <span class="op">=</span> train_test_split(x, y, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<div class="sourceCode" id="cb67"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb67-1"><a href="#cb67-1" tabindex="-1"></a>x_train, x_test, y_train, y_test <span class="op">=</span> train_test_split(x,y,test_size<span class="op">=</span><span class="fl">0.3</span>,random_state<span class="op">=</span><span class="dv">42</span>)</span>
 <span id="cb67-2"><a href="#cb67-2" tabindex="-1"></a></span>
 <span id="cb67-3"><a href="#cb67-3" tabindex="-1"></a><span class="co"># Balance dataset</span></span>
 <span id="cb67-4"><a href="#cb67-4" tabindex="-1"></a>smote <span class="op">=</span> SMOTE(random_state<span class="op">=</span><span class="dv">42</span>)</span>
@@ -2118,8 +2118,8 @@ Preprocessing</h2>
 <span id="cb67-6"><a href="#cb67-6" tabindex="-1"></a></span>
 <span id="cb67-7"><a href="#cb67-7" tabindex="-1"></a>y_train_smote.value_counts()</span></code></pre></div>
 <pre><code>## Churn
-## 0    4138
-## 1    4138
+## 0    3635
+## 1    3635
 ## Name: count, dtype: int64</code></pre>
 </div>
 <div id="modeling-training" class="section level2" number="15">
@@ -2747,29 +2747,29 @@ document.querySelectorAll('.fa-regular.fa-copy').forEach(function(element) {
 </script></body>
 <div class="sourceCode" id="cb70"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb70-1"><a href="#cb70-1" tabindex="-1"></a><span class="bu">print</span>(y_test.value_counts())</span></code></pre></div>
 <pre><code>## Churn
-## 0    1036
-## 1     373
+## 0    1539
+## 1     574
 ## Name: count, dtype: int64</code></pre>
 <div class="sourceCode" id="cb72"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb72-1"><a href="#cb72-1" tabindex="-1"></a>y_test_pred <span class="op">=</span> random_forest.predict(x_test)</span>
 <span id="cb72-2"><a href="#cb72-2" tabindex="-1"></a></span>
 <span id="cb72-3"><a href="#cb72-3" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;accuracy: </span><span class="sc">{</span>accuracy_score(y_test, y_test_pred)<span class="sc">}</span><span class="ss">&quot;</span>)</span></code></pre></div>
-<pre><code>## accuracy: 0.7785663591199432</code></pre>
+<pre><code>## accuracy: 0.7695220066256507</code></pre>
 <div class="sourceCode" id="cb74"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb74-1"><a href="#cb74-1" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Confusion Matrix Random Forest: &quot;</span>)</span></code></pre></div>
 <pre><code>## Confusion Matrix Random Forest:</code></pre>
 <div class="sourceCode" id="cb76"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb76-1"><a href="#cb76-1" tabindex="-1"></a><span class="bu">print</span>(confusion_matrix(y_test, y_test_pred))</span></code></pre></div>
-<pre><code>## [[878 158]
-##  [154 219]]</code></pre>
+<pre><code>## [[1299  240]
+##  [ 247  327]]</code></pre>
 <div class="sourceCode" id="cb78"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb78-1"><a href="#cb78-1" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Random Forest Classificaion&quot;</span>)</span></code></pre></div>
 <pre><code>## Random Forest Classificaion</code></pre>
 <div class="sourceCode" id="cb80"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb80-1"><a href="#cb80-1" tabindex="-1"></a><span class="bu">print</span>(classification_report(y_test, y_test_pred))</span></code></pre></div>
 <pre><code>##               precision    recall  f1-score   support
 ## 
-##            0       0.85      0.85      0.85      1036
-##            1       0.58      0.59      0.58       373
+##            0       0.84      0.84      0.84      1539
+##            1       0.58      0.57      0.57       574
 ## 
-##     accuracy                           0.78      1409
-##    macro avg       0.72      0.72      0.72      1409
-## weighted avg       0.78      0.78      0.78      1409</code></pre>
+##     accuracy                           0.77      2113
+##    macro avg       0.71      0.71      0.71      2113
+## weighted avg       0.77      0.77      0.77      2113</code></pre>
 </div>
 <div id="xgboost-model-training" class="section level2" number="17">
 <h2><span class="header-section-number">17</span> XGBoost Model
@@ -3581,23 +3581,23 @@ document.querySelectorAll('.fa-regular.fa-copy').forEach(function(element) {
 <div class="sourceCode" id="cb83"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb83-1"><a href="#cb83-1" tabindex="-1"></a>y_test_pred <span class="op">=</span> xgb.predict(x_test)</span>
 <span id="cb83-2"><a href="#cb83-2" tabindex="-1"></a></span>
 <span id="cb83-3"><a href="#cb83-3" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Accuracy XGBoost: </span><span class="sc">{</span>accuracy_score(y_test, y_test_pred)<span class="sc">}</span><span class="ss">&quot;</span>)</span></code></pre></div>
-<pre><code>## Accuracy XGBoost: 0.7856635911994322</code></pre>
+<pre><code>## Accuracy XGBoost: 0.7690487458589683</code></pre>
 <div class="sourceCode" id="cb85"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb85-1"><a href="#cb85-1" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Confusion Matrix XGBoost: &quot;</span>)</span></code></pre></div>
 <pre><code>## Confusion Matrix XGBoost:</code></pre>
 <div class="sourceCode" id="cb87"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb87-1"><a href="#cb87-1" tabindex="-1"></a><span class="bu">print</span>(confusion_matrix(y_test, y_test_pred))</span></code></pre></div>
-<pre><code>## [[883 153]
-##  [149 224]]</code></pre>
+<pre><code>## [[1287  252]
+##  [ 236  338]]</code></pre>
 <div class="sourceCode" id="cb89"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb89-1"><a href="#cb89-1" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;XGBoost Classificaion&quot;</span>)</span></code></pre></div>
 <pre><code>## XGBoost Classificaion</code></pre>
 <div class="sourceCode" id="cb91"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb91-1"><a href="#cb91-1" tabindex="-1"></a><span class="bu">print</span>(classification_report(y_test, y_test_pred))</span></code></pre></div>
 <pre><code>##               precision    recall  f1-score   support
 ## 
-##            0       0.86      0.85      0.85      1036
-##            1       0.59      0.60      0.60       373
+##            0       0.85      0.84      0.84      1539
+##            1       0.57      0.59      0.58       574
 ## 
-##     accuracy                           0.79      1409
-##    macro avg       0.72      0.73      0.73      1409
-## weighted avg       0.79      0.79      0.79      1409</code></pre>
+##     accuracy                           0.77      2113
+##    macro avg       0.71      0.71      0.71      2113
+## weighted avg       0.77      0.77      0.77      2113</code></pre>
 </div>
 <div id="support-vector-machine-svm-model-training" class="section level2" number="18">
 <h2><span class="header-section-number">18</span> Support Vector Machine
@@ -4190,23 +4190,23 @@ document.querySelectorAll('.fa-regular.fa-copy').forEach(function(element) {
 <div class="sourceCode" id="cb94"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb94-1"><a href="#cb94-1" tabindex="-1"></a>y_test_pred <span class="op">=</span> svm_model.predict(x_test)</span>
 <span id="cb94-2"><a href="#cb94-2" tabindex="-1"></a></span>
 <span id="cb94-3"><a href="#cb94-3" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Accuracy SVM: </span><span class="sc">{</span>accuracy_score(y_test, y_test_pred)<span class="sc">}</span><span class="ss">&quot;</span>)</span></code></pre></div>
-<pre><code>## Accuracy SVM: 0.7615330021291696</code></pre>
+<pre><code>## Accuracy SVM: 0.7520113582584004</code></pre>
 <div class="sourceCode" id="cb96"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb96-1"><a href="#cb96-1" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Confusion Matrix SVM: &quot;</span>)</span></code></pre></div>
 <pre><code>## Confusion Matrix SVM:</code></pre>
 <div class="sourceCode" id="cb98"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb98-1"><a href="#cb98-1" tabindex="-1"></a><span class="bu">print</span>(confusion_matrix(y_test, y_test_pred))</span></code></pre></div>
-<pre><code>## [[795 241]
-##  [ 95 278]]</code></pre>
+<pre><code>## [[1160  379]
+##  [ 145  429]]</code></pre>
 <div class="sourceCode" id="cb100"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb100-1"><a href="#cb100-1" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;SVM Classification&quot;</span>)</span></code></pre></div>
 <pre><code>## SVM Classification</code></pre>
 <div class="sourceCode" id="cb102"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb102-1"><a href="#cb102-1" tabindex="-1"></a><span class="bu">print</span>(classification_report(y_test, y_test_pred))</span></code></pre></div>
 <pre><code>##               precision    recall  f1-score   support
 ## 
-##            0       0.89      0.77      0.83      1036
-##            1       0.54      0.75      0.62       373
+##            0       0.89      0.75      0.82      1539
+##            1       0.53      0.75      0.62       574
 ## 
-##     accuracy                           0.76      1409
-##    macro avg       0.71      0.76      0.72      1409
-## weighted avg       0.80      0.76      0.77      1409</code></pre>
+##     accuracy                           0.75      2113
+##    macro avg       0.71      0.75      0.72      2113
+## weighted avg       0.79      0.75      0.76      2113</code></pre>
 </div>
 <div id="artificial-neural-network-mlp-model-training" class="section level2" number="19">
 <h2><span class="header-section-number">19</span> Artificial Neural
@@ -4863,23 +4863,23 @@ document.querySelectorAll('.fa-regular.fa-copy').forEach(function(element) {
 <div class="sourceCode" id="cb105"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb105-1"><a href="#cb105-1" tabindex="-1"></a>y_test_pred <span class="op">=</span> mlp.predict(x_test)</span>
 <span id="cb105-2"><a href="#cb105-2" tabindex="-1"></a></span>
 <span id="cb105-3"><a href="#cb105-3" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&quot;Accuracy MLP: </span><span class="sc">{</span>accuracy_score(y_test, y_test_pred)<span class="sc">}</span><span class="ss">&quot;</span>)</span></code></pre></div>
-<pre><code>## Accuracy MLP: 0.7473385379701917</code></pre>
+<pre><code>## Accuracy MLP: 0.7813535257927118</code></pre>
 <div class="sourceCode" id="cb107"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb107-1"><a href="#cb107-1" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;Confusion Matrix MLP: &quot;</span>)</span></code></pre></div>
 <pre><code>## Confusion Matrix MLP:</code></pre>
 <div class="sourceCode" id="cb109"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb109-1"><a href="#cb109-1" tabindex="-1"></a><span class="bu">print</span>(confusion_matrix(y_test, y_test_pred))</span></code></pre></div>
-<pre><code>## [[752 284]
-##  [ 72 301]]</code></pre>
+<pre><code>## [[1364  175]
+##  [ 287  287]]</code></pre>
 <div class="sourceCode" id="cb111"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb111-1"><a href="#cb111-1" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;MLP Classification&quot;</span>)</span></code></pre></div>
 <pre><code>## MLP Classification</code></pre>
 <div class="sourceCode" id="cb113"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb113-1"><a href="#cb113-1" tabindex="-1"></a><span class="bu">print</span>(classification_report(y_test, y_test_pred))</span></code></pre></div>
 <pre><code>##               precision    recall  f1-score   support
 ## 
-##            0       0.91      0.73      0.81      1036
-##            1       0.51      0.81      0.63       373
+##            0       0.83      0.89      0.86      1539
+##            1       0.62      0.50      0.55       574
 ## 
-##     accuracy                           0.75      1409
-##    macro avg       0.71      0.77      0.72      1409
-## weighted avg       0.81      0.75      0.76      1409</code></pre>
+##     accuracy                           0.78      2113
+##    macro avg       0.72      0.69      0.70      2113
+## weighted avg       0.77      0.78      0.77      2113</code></pre>
 </div>
 
 
