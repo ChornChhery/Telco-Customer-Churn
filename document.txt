@@ -435,3 +435,150 @@ precision    recall  f1-score   support
     accuracy                           0.79      1409
    macro avg       0.73      0.73      0.73      1409
 weighted avg       0.79      0.79      0.79      1409
+
+
+=============================================
+
+## Train 70% and Testing 30%
+
+x_train, x_test, y_train, y_test = train_test_split(x,y,test_size=0.3,random_state=42)
+
+from imblearn.over_sampling import SMOTE
+
+smote = SMOTE(random_state=42)
+
+x_train_smote, y_train_smote = smote.fit_resample(x_train, y_train)
+
+print(y_train_smote.shape)
+(7270,)
+
+print(y_train_smote.value_counts())
+Churn
+0    3635
+1    3635
+Name: count, dtype: int64
+
+from sklearn.ensemble import RandomForestClassifier
+from xgboost import XGBClassifier
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+
+random_forest = RandomForestClassifier(n_estimators=100, random_state=42)
+
+random_forest.fit(x_train_smote, y_train_smote)
+
+print(y_test.value_counts())
+Churn
+0    1539
+1     574
+Name: count, dtype: int64
+
+y_test_pred = random_forest.predict(x_test)
+
+print(f"accuracy: {accuracy_score(y_test, y_test_pred)}")
+accuracy: 0.7695220066256507
+
+print(confusion_matrix(y_test, y_test_pred))
+Confusion Matrix Random Forest: 
+[[1299  240]
+ [ 247  327]]
+
+print(classification_report(y_test, y_test_pred))
+Random Forest Classifier: 
+              precision    recall  f1-score   support
+
+           0       0.84      0.84      0.84      1539
+           1       0.58      0.57      0.57       574
+
+    accuracy                           0.77      2113
+   macro avg       0.71      0.71      0.71      2113
+weighted avg       0.77      0.77      0.77      2113
+
+xgb = XGBClassifier(use_label_encoder=False, eval_metric='logloss', random_state=42)
+
+xgb.fit(x_train_smote, y_train_smote)
+
+print(y_test.value_counts())
+Churn
+0    1036
+1     373
+Name: count, dtype: int64
+
+y_test_pred = xgb.predict(x_test)
+
+print(f"Accuracy XGBoost: {accuracy_score(y_test, y_test_pred)}")
+Accuracy XGBoost: 0.7690487458589683
+
+print("Confusion Matrix XGBoost: ")
+print(confusion_matrix(y_test, y_test_pred))
+Confusion Matrix XGBoost: 
+[[1287  252]
+ [ 236  338]]
+
+print(classification_report(y_test, y_test_pred))
+XGBoost Classifier: 
+              precision    recall  f1-score   support
+
+           0       0.85      0.84      0.84      1539
+           1       0.57      0.59      0.58       574
+
+    accuracy                           0.77      2113
+   macro avg       0.71      0.71      0.71      2113
+weighted avg       0.77      0.77      0.77      2113
+
+from sklearn import svm
+
+svm_model = svm.SVC(kernel='linear',C=1.0, gamma='scale', random_state=42)
+
+svm_model.fit(x_train_smote, y_train_smote)
+
+y_test_pred = svm_model.predict(x_test)
+
+print(f"Accuracy SVM: {accuracy_score(y_test, y_test_pred)}")
+Accuracy SVM: 0.7520113582584004
+
+print("Confusion Matrix SVM: ")
+print(confusion_matrix(y_test, y_test_pred))
+Confusion Matrix SVM: 
+[[1160  379]
+ [ 145  429]]
+
+print(classification_report(y_test, y_test_pred))
+SVM Classifier:  
+              precision    recall  f1-score   support
+
+           0       0.89      0.75      0.82      1539
+           1       0.53      0.75      0.62       574
+
+    accuracy                           0.75      2113
+   macro avg       0.71      0.75      0.72      2113
+weighted avg       0.79      0.75      0.76      2113
+
+from sklearn.neural_network import MLPClassifier
+
+mlp = MLPClassifier(hidden_layer_sizes=(100,), max_iter=300, random_state=42)
+
+mlp.fit(x_train_smote, y_train_smote)
+
+y_test_pred = mlp.predict(x_test)
+
+print(y_test_pred.shape)
+(2113,)
+
+print(f"Accuracy MLP: {accuracy_score(y_test, y_test_pred)}")
+Accuracy MLP: 0.6365357311878845
+
+print(confusion_matrix(y_test, y_test_pred))
+Confusion Matrix MLP:
+[[823 716]
+ [ 52 522]]
+
+print(classification_report(y_test, y_test_pred))
+MLP Classifier: 
+              precision    recall  f1-score   support
+
+           0       0.94      0.53      0.68      1539
+           1       0.42      0.91      0.58       574
+
+    accuracy                           0.64      2113
+   macro avg       0.68      0.72      0.63      2113
+weighted avg       0.80      0.64      0.65      2113
