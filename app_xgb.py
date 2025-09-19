@@ -1,5 +1,3 @@
-# app.py - Streamlit Churn Prediction App
-
 import streamlit as st
 import pandas as pd
 import pickle
@@ -16,17 +14,17 @@ def load_model():
 
 model, encoders = load_model()
 
-# App title and description
-st.set_page_config(page_title="Telco Churn Predictor", page_icon="📞")
+# Page config
+st.set_page_config(page_title="Telco Churn Predictor (XGBoost)", page_icon="📈")
 st.title("📞 Telco Customer Churn Prediction")
 st.markdown("""
-    Predict whether a customer is likely to churn based on their profile.
-    Fill in the details below and click **Predict**.
+    **Model: XGBoost (Trained on 80% data with SMOTE)**  
+    High accuracy and good recall. Fill in customer details below.
 """)
 
 st.header("📝 Customer Information")
 
-# Create input form
+# Input form in 2 columns
 col1, col2 = st.columns(2)
 
 with col1:
@@ -54,12 +52,12 @@ with col2:
         "Bank transfer (automatic)",
         "Credit card (automatic)"
     ])
-    monthly_charges = st.number_input("Monthly Charges ($)", min_value=0.0, max_value=200.0, value=70.0)
-    total_charges = st.number_input("Total Charges ($)", min_value=0.0, max_value=10000.0, value=800.0)
+    monthly_charges = st.number_input("Monthly Charges ($)", min_value=0.0, max_value=200.0, value=70.0, step=0.01)
+    total_charges = st.number_input("Total Charges ($)", min_value=0.0, max_value=10000.0, value=800.0, step=0.01)
 
-# Prediction button
+# Predict button
 if st.button("🔮 Predict Churn"):
-    # Create input dataframe
+    # Create input DataFrame
     input_data = pd.DataFrame({
         'gender': [gender],
         'SeniorCitizen': [1 if senior_citizen == "Yes" else 0],
@@ -82,9 +80,12 @@ if st.button("🔮 Predict Churn"):
         'TotalCharges': [total_charges]
     })
 
-    # Encode categorical columns
+    # Encode categorical columns — ONLY if column exists
     for col in encoders.keys():
-        input_data[col] = encoders[col].transform(input_data[col])
+        if col in input_data.columns:
+            input_data[col] = encoders[col].transform(input_data[col])
+        else:
+            st.warning(f"⚠️ Column '{col}' not found in input. Skipping encoding.")
 
     # Predict
     prediction = model.predict(input_data)[0]
@@ -102,9 +103,17 @@ if st.button("🔮 Predict Churn"):
     prob_data = pd.DataFrame({
         'Class': ['Stay (No)', 'Churn (Yes)'],
         'Probability': [probability[0], probability[1]]
-    })
-    st.bar_chart(prob_data.set_index('Class'))
+    }).set_index('Class')
+    st.bar_chart(prob_data)
 
 # Footer
 st.markdown("---")
-st.caption("Built with ❤️ using Streamlit | Model: XGBoost trained on 70% data with SMOTE")
+st.subheader("🧠 Model Info")
+st.markdown("""
+- ✅ **Algorithm**: XGBoost
+- ✅ **Train/Test Split**: 80% / 20%
+- ✅ **Class Balancing**: SMOTE applied on training set
+- ✅ **Performance**: ~79% Accuracy, ~60% F1-Score for Churn
+""")
+
+st.caption("Built with ❤️ using Streamlit | Model: XGBoost | Data: Telco Customer Churn")
