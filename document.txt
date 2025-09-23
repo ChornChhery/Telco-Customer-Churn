@@ -436,8 +436,19 @@ precision    recall  f1-score   support
    macro avg       0.73      0.73      0.73      1409
 weighted avg       0.79      0.79      0.79      1409
 
+# Save model
+with open("churn_model_xgb.pkl", "wb") as f:
+    pickle.dump(xgb, f)
 
-=============================================
+print("✅ Model and encoders saved successfully!")
+
+# Save model
+with open("churn_model_svm.pkl", "wb") as f:
+    pickle.dump(svm_model, f)
+
+print("✅ SVM Model and encoders saved successfully!")
+
+======================================================================================
 
 ## Train 70% and Testing 30%
 
